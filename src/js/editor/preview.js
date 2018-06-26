@@ -3,41 +3,22 @@ let savedOverflow = '';
 export function toggleFullScreen(editor) {
     // Set fullscreen
     const cm = editor.codemirror;
-    cm.setOption('fullScreen', !cm.getOption('fullScreen'));
-
+    const isActive = cm.getOption('fullScreen');
+    cm.setOption('fullScreen', !isActive);
 
     // Prevent scrolling on body during fullscreen active
-    if (cm.getOption('fullScreen')) {
+    if (isActive) {
         savedOverflow = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
     } else {
         document.body.style.overflow = savedOverflow;
     }
 
+    editor.el.classList.toggle('smde--fullscreen');
 
-    // Update toolbar class
-    const wrap = cm.getWrapperElement();
-
-    if (!/fullscreen/.test(wrap.previousSibling.className)) {
-        wrap.previousSibling.className += ' fullscreen';
-    } else {
-        wrap.previousSibling.className = wrap.previousSibling.className.replace(/\s*fullscreen\b/, '');
+    if (editor.toolbar) {
+        editor.toolbar.classList.toggle('fullscreen');
     }
-
-
-    // Update toolbar button
-    const toolbarButton = editor.toolbarElements.fullscreen;
-
-    if (!/active/.test(toolbarButton.className)) {
-        toolbarButton.className += ' active';
-    } else {
-        toolbarButton.className = toolbarButton.className.replace(/\s*active\s*/g, '');
-    }
-
-
-    // Hide side by side if needed
-    const sidebyside = cm.getWrapperElement().nextSibling;
-    if (/editor-preview-active-side/.test(sidebyside.className)) { toggleSideBySide(editor); }
 }
 
 export function toggleSideBySide(editor) {
@@ -78,7 +59,7 @@ export function toggleSideBySide(editor) {
     }
 
     const sideBySideRenderingFunction = () => {
-        preview.innerHTML = editor.options.previewRender(editor.value(), preview);
+        preview.innerHTML = editor.options.renderPreview(editor.value());
     };
 
     if (!cm.sideBySideRenderingFunction) {
@@ -86,7 +67,7 @@ export function toggleSideBySide(editor) {
     }
 
     if (useSideBySideListener) {
-        preview.innerHTML = editor.options.previewRender(editor.value(), preview);
+        preview.innerHTML = editor.options.renderPreview(editor.value());
         cm.on('update', cm.sideBySideRenderingFunction);
     } else {
         cm.off('update', cm.sideBySideRenderingFunction);
@@ -97,65 +78,47 @@ export function toggleSideBySide(editor) {
 }
 
 export function togglePreview(editor) {
-    const cm = editor.codemirror;
-    const wrapper = cm.getWrapperElement();
-    const toolbarEl = wrapper.previousSibling;
-    const toolbar = editor.options.toolbar ? editor.toolbarElements.preview : false;
-    let preview = wrapper.lastChild;
-    if (!preview || !/editor-preview/.test(preview.className)) {
-        preview = document.createElement('div');
-        preview.className = 'editor-preview';
-        wrapper.appendChild(preview);
+    if (!editor.previewer) {
+        return;
     }
-    if (/editor-preview-active/.test(preview.className)) {
-        preview.className = preview.className.replace(
-            /\s*editor-preview-active\s*/g, ''
-        );
-        if (toolbar) {
-            toolbar.className = toolbar.className.replace(/\s*active\s*/g, '');
-            toolbarEl.className = toolbarEl.className.replace(/\s*disabled-for-preview*/g, '');
-        }
-    } else {
-        // When the preview button is clicked for the first time,
-        // give some time for the transition from editor.css to fire and the view to slide from right to left,
-        // instead of just appearing.
-        setTimeout(() => {
-            preview.className += ' editor-preview-active';
-        }, 1);
-        if (toolbar) {
-            toolbar.className += ' active';
-            toolbarEl.className += ' disabled-for-preview';
-        }
-    }
-    preview.innerHTML = editor.options.previewRender(editor.value(), preview);
 
-    // Turn off side by side if needed
-    const sidebyside = cm.getWrapperElement().nextSibling;
-    if (/editor-preview-active-side/.test(sidebyside.className)) { toggleSideBySide(editor); }
+    const previewer = editor.previewer;
+
+    previewer.classList.toggle('editor-preview-active');
+
+    if (previewer.classList.contains('editor-preview-active')) {
+        previewer.innerHTML = editor.options.renderPreview(editor.value());
+    }
 }
 
-export function createSidePreview(editor) {
+export function addPreviewer(editor) {
+    if (editor.previewer) {
+        return;
+    }
+
+    const previewer = document.createElement('div');
+    previewer.className = 'editor-preview';
+
+    const cm = editor.codemirror;
+    const wrapper = cm.getWrapperElement();
+    wrapper.appendChild(previewer);
+    editor.previewer = previewer;
+}
+
+export function addSidePreviewer(editor) {
+    if (editor.sidePreviewer) {
+        return;
+    }
+
     const cm = editor.codemirror;
 
     const wrapper = cm.getWrapperElement();
-    let preview = wrapper.nextSibling;
-
-    if (!preview || !/editor-preview-side/.test(preview.className)) {
-        preview = document.createElement('div');
-        preview.className = 'editor-preview-side';
-        wrapper.parentNode.insertBefore(preview, wrapper.nextSibling);
-    }
-
-    let cScroll = false;
-    let pScroll = false;
+    const preview = document.createElement('div');
+    preview.className = 'editor-preview-side';
+    wrapper.parentNode.insertBefore(preview, wrapper.nextSibling);
 
     // Syncs scroll  editor -> preview
     cm.on('scroll', (v) => {
-        if (cScroll) {
-            cScroll = false;
-            return;
-        }
-        pScroll = true;
         const height = v.getScrollInfo().height - v.getScrollInfo().clientHeight;
         const ratio = parseFloat(v.getScrollInfo().top) / height;
         const move = (preview.scrollHeight - preview.clientHeight) * ratio;
@@ -163,17 +126,12 @@ export function createSidePreview(editor) {
     });
 
     // Syncs scroll  preview -> editor
-    preview.onscroll = () => {
-        if (pScroll) {
-            pScroll = false;
-            return;
-        }
-        cScroll = true;
+    preview.addEventListener('scroll', () => {
         const height = preview.scrollHeight - preview.clientHeight;
         const ratio = parseFloat(preview.scrollTop) / height;
         const move = (cm.getScrollInfo().height - cm.getScrollInfo().clientHeight) * ratio;
         cm.scrollTo(0, move);
-    };
+    });
 
-    return preview;
+    editor.sidePreviewer = preview;
 }

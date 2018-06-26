@@ -189,7 +189,7 @@ function createToolbarButton(options, editor) {
     button.appendChild(icon);
 
     if (typeof options.action === 'function') {
-        button.addEventListener('click', () => options.action(editor));
+        button.addEventListener('click', () => options.action(editor, button));
     }
 
     return button;
@@ -216,4 +216,6 @@ export function useToolbar(items, editor) {
     // Insert status bar
     const cmWrapper = editor.codemirror.getWrapperElement();
     cmWrapper.parentNode.insertBefore(toolbar, cmWrapper);
+
+    editor.toolbar = toolbar;
 }

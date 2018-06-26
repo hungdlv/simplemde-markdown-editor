@@ -37,6 +37,7 @@ export function getState(cm, pos) {
         image: types.includes('tag'),
         ordered_list: orderedList,
         unordered_list: list && !orderedList,
+        quote: ['quote', 'atom'].some(type => types.includes(type)),
         ...headings
     };
 }

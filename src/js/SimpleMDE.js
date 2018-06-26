@@ -4,7 +4,12 @@ export default class SimpleMDE {
     constructor(options) {
         this.options = options;
         this.codemirror = null;
-        this.element = null;
+        this.el = null;
+        this.textarea = null;
+        this.previewer = null;
+        this.sidePreviewer = null;
+        this.toolbar = null;
+        this.statusbar = null;
     }
 
     isReadonly() {
