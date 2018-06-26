@@ -137,46 +137,46 @@ function createTootlip(title, action, shortcuts) {
 /**
  * The state of CodeMirror at the given position.
  */
-function getState(cm, pos) {
-	pos = pos || cm.getCursor("start");
-	var stat = cm.getTokenAt(pos);
-	if(!stat.type) return {};
+// function getState(cm, pos) {
+// 	pos = pos || cm.getCursor("start");
+// 	var stat = cm.getTokenAt(pos);
+// 	if(!stat.type) return {};
 
-	var types = stat.type.split(" ");
+// 	var types = stat.type.split(" ");
 
-	var ret = {},
-		data, text;
-	for(var i = 0; i < types.length; i++) {
-		data = types[i];
-		if(data === "strong") {
-			ret.bold = true;
-		} else if(data === "variable-2") {
-			text = cm.getLine(pos.line);
-			if(/^\s*\d+\.\s/.test(text)) {
-				ret["ordered-list"] = true;
-			} else {
-				ret["unordered-list"] = true;
-			}
-		} else if(data === "atom") {
-			ret.quote = true;
-		} else if(data === "em") {
-			ret.italic = true;
-		} else if(data === "quote") {
-			ret.quote = true;
-		} else if(data === "strikethrough") {
-			ret.strikethrough = true;
-		} else if(data === "comment") {
-			ret.code = true;
-		} else if(data === "link") {
-			ret.link = true;
-		} else if(data === "tag") {
-			ret.image = true;
-		} else if(data.match(/^header(\-[1-6])?$/)) {
-			ret[data.replace("header", "heading")] = true;
-		}
-	}
-	return ret;
-}
+// 	var ret = {},
+// 		data, text;
+// 	for(var i = 0; i < types.length; i++) {
+// 		data = types[i];
+// 		if(data === "strong") {
+// 			ret.bold = true;
+// 		} else if(data === "variable-2") {
+// 			text = cm.getLine(pos.line);
+// 			if(/^\s*\d+\.\s/.test(text)) {
+// 				ret["ordered-list"] = true;
+// 			} else {
+// 				ret["unordered-list"] = true;
+// 			}
+// 		} else if(data === "atom") {
+// 			ret.quote = true;
+// 		} else if(data === "em") {
+// 			ret.italic = true;
+// 		} else if(data === "quote") {
+// 			ret.quote = true;
+// 		} else if(data === "strikethrough") {
+// 			ret.strikethrough = true;
+// 		} else if(data === "comment") {
+// 			ret.code = true;
+// 		} else if(data === "link") {
+// 			ret.link = true;
+// 		} else if(data === "tag") {
+// 			ret.image = true;
+// 		} else if(data.match(/^header(\-[1-6])?$/)) {
+// 			ret[data.replace("header", "heading")] = true;
+// 		}
+// 	}
+// 	return ret;
+// }
 
 
 // Saved overflow setting
@@ -230,25 +230,25 @@ function toggleFullScreen(editor) {
 /**
  * Action for toggling bold.
  */
-function toggleBold(editor) {
-	_toggleBlock(editor, "bold", editor.options.blockStyles.bold);
-}
+// function toggleBold(editor) {
+// 	_toggleBlock(editor, "bold", editor.options.blockStyles.bold);
+// }
 
 
-/**
- * Action for toggling italic.
- */
-function toggleItalic(editor) {
-	_toggleBlock(editor, "italic", editor.options.blockStyles.italic);
-}
+// /**
+//  * Action for toggling italic.
+//  */
+// function toggleItalic(editor) {
+// 	_toggleBlock(editor, "italic", editor.options.blockStyles.italic);
+// }
 
 
-/**
- * Action for toggling strikethrough.
- */
-function toggleStrikethrough(editor) {
-	_toggleBlock(editor, "strikethrough", "~~");
-}
+// /**
+//  * Action for toggling strikethrough.
+//  */
+// function toggleStrikethrough(editor) {
+// 	_toggleBlock(editor, "strikethrough", "~~");
+// }
 
 /**
  * Action for toggling code block.
@@ -613,36 +613,36 @@ function cleanBlock(editor) {
 /**
  * Action for drawing a link.
  */
-function drawLink(editor) {
-	var cm = editor.codemirror;
-	var stat = getState(cm);
-	var options = editor.options;
-	var url = "http://";
-	if(options.promptURLs) {
-		url = prompt(options.promptTexts.link);
-		if(!url) {
-			return false;
-		}
-	}
-	_replaceSelection(cm, stat.link, options.insertTexts.link, url);
-}
+// function drawLink(editor) {
+// 	var cm = editor.codemirror;
+// 	var stat = getState(cm);
+// 	var options = editor.options;
+// 	var url = "http://";
+// 	if(options.promptURLs) {
+// 		url = prompt(options.promptTexts.link);
+// 		if(!url) {
+// 			return false;
+// 		}
+// 	}
+// 	_replaceSelection(cm, stat.link, options.insertTexts.link, url);
+// }
 
 /**
  * Action for drawing an img.
  */
-function drawImage(editor) {
-	var cm = editor.codemirror;
-	var stat = getState(cm);
-	var options = editor.options;
-	var url = "http://";
-	if(options.promptURLs) {
-		url = prompt(options.promptTexts.image);
-		if(!url) {
-			return false;
-		}
-	}
-	_replaceSelection(cm, stat.image, options.insertTexts.image, url);
-}
+// function drawImage(editor) {
+// 	var cm = editor.codemirror;
+// 	var stat = getState(cm);
+// 	var options = editor.options;
+// 	var url = "http://";
+// 	if(options.promptURLs) {
+// 		url = prompt(options.promptTexts.image);
+// 		if(!url) {
+// 			return false;
+// 		}
+// 	}
+// 	_replaceSelection(cm, stat.image, options.insertTexts.image, url);
+// }
 
 /**
  * Action for drawing a table.
@@ -929,74 +929,74 @@ function _toggleLine(cm, name) {
 	cm.focus();
 }
 
-function _toggleBlock(editor, type, start_chars, end_chars) {
-	if(/editor-preview-active/.test(editor.codemirror.getWrapperElement().lastChild.className))
-		return;
+// function _toggleBlock(editor, type, start_chars, end_chars) {
+// 	if(/editor-preview-active/.test(editor.codemirror.getWrapperElement().lastChild.className))
+// 		return;
 
-	end_chars = (typeof end_chars === "undefined") ? start_chars : end_chars;
-	var cm = editor.codemirror;
-	var stat = getState(cm);
+// 	end_chars = (typeof end_chars === "undefined") ? start_chars : end_chars;
+// 	var cm = editor.codemirror;
+// 	var stat = getState(cm);
 
-	var text;
-	var start = start_chars;
-	var end = end_chars;
+// 	var text;
+// 	var start = start_chars;
+// 	var end = end_chars;
 
-	var startPoint = cm.getCursor("start");
-	var endPoint = cm.getCursor("end");
+// 	var startPoint = cm.getCursor("start");
+// 	var endPoint = cm.getCursor("end");
 
-	if(stat[type]) {
-		text = cm.getLine(startPoint.line);
-		start = text.slice(0, startPoint.ch);
-		end = text.slice(startPoint.ch);
-		if(type == "bold") {
-			start = start.replace(/(\*\*|__)(?![\s\S]*(\*\*|__))/, "");
-			end = end.replace(/(\*\*|__)/, "");
-		} else if(type == "italic") {
-			start = start.replace(/(\*|_)(?![\s\S]*(\*|_))/, "");
-			end = end.replace(/(\*|_)/, "");
-		} else if(type == "strikethrough") {
-			start = start.replace(/(\*\*|~~)(?![\s\S]*(\*\*|~~))/, "");
-			end = end.replace(/(\*\*|~~)/, "");
-		}
-		cm.replaceRange(start + end, {
-			line: startPoint.line,
-			ch: 0
-		}, {
-			line: startPoint.line,
-			ch: 99999999999999
-		});
+// 	if(stat[type]) {
+// 		text = cm.getLine(startPoint.line);
+// 		start = text.slice(0, startPoint.ch);
+// 		end = text.slice(startPoint.ch);
+// 		if(type == "bold") {
+// 			start = start.replace(/(\*\*|__)(?![\s\S]*(\*\*|__))/, "");
+// 			end = end.replace(/(\*\*|__)/, "");
+// 		} else if(type == "italic") {
+// 			start = start.replace(/(\*|_)(?![\s\S]*(\*|_))/, "");
+// 			end = end.replace(/(\*|_)/, "");
+// 		} else if(type == "strikethrough") {
+// 			start = start.replace(/(\*\*|~~)(?![\s\S]*(\*\*|~~))/, "");
+// 			end = end.replace(/(\*\*|~~)/, "");
+// 		}
+// 		cm.replaceRange(start + end, {
+// 			line: startPoint.line,
+// 			ch: 0
+// 		}, {
+// 			line: startPoint.line,
+// 			ch: 99999999999999
+// 		});
 
-		if(type == "bold" || type == "strikethrough") {
-			startPoint.ch -= 2;
-			if(startPoint !== endPoint) {
-				endPoint.ch -= 2;
-			}
-		} else if(type == "italic") {
-			startPoint.ch -= 1;
-			if(startPoint !== endPoint) {
-				endPoint.ch -= 1;
-			}
-		}
-	} else {
-		text = cm.getSelection();
-		if(type == "bold") {
-			text = text.split("**").join("");
-			text = text.split("__").join("");
-		} else if(type == "italic") {
-			text = text.split("*").join("");
-			text = text.split("_").join("");
-		} else if(type == "strikethrough") {
-			text = text.split("~~").join("");
-		}
-		cm.replaceSelection(start + text + end);
+// 		if(type == "bold" || type == "strikethrough") {
+// 			startPoint.ch -= 2;
+// 			if(startPoint !== endPoint) {
+// 				endPoint.ch -= 2;
+// 			}
+// 		} else if(type == "italic") {
+// 			startPoint.ch -= 1;
+// 			if(startPoint !== endPoint) {
+// 				endPoint.ch -= 1;
+// 			}
+// 		}
+// 	} else {
+// 		text = cm.getSelection();
+// 		if(type == "bold") {
+// 			text = text.split("**").join("");
+// 			text = text.split("__").join("");
+// 		} else if(type == "italic") {
+// 			text = text.split("*").join("");
+// 			text = text.split("_").join("");
+// 		} else if(type == "strikethrough") {
+// 			text = text.split("~~").join("");
+// 		}
+// 		cm.replaceSelection(start + text + end);
 
-		startPoint.ch += start_chars.length;
-		endPoint.ch = startPoint.ch + text.length;
-	}
+// 		startPoint.ch += start_chars.length;
+// 		endPoint.ch = startPoint.ch + text.length;
+// 	}
 
-	cm.setSelection(startPoint, endPoint);
-	cm.focus();
-}
+// 	cm.setSelection(startPoint, endPoint);
+// 	cm.focus();
+// }
 
 function _cleanBlock(cm) {
 	if(/editor-preview-active/.test(cm.getWrapperElement().lastChild.className))
@@ -1051,194 +1051,194 @@ function extend(target) {
 }
 
 /* The right word count in respect for CJK. */
-function wordCount(data) {
-	var pattern = /[a-zA-Z0-9_\u0392-\u03c9\u0410-\u04F9]+|[\u4E00-\u9FFF\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\uac00-\ud7af]+/g;
-	var m = data.match(pattern);
-	var count = 0;
-	if(m === null) return count;
-	for(var i = 0; i < m.length; i++) {
-		if(m[i].charCodeAt(0) >= 0x4E00) {
-			count += m[i].length;
-		} else {
-			count += 1;
-		}
-	}
-	return count;
-}
+// function wordCount(data) {
+// 	var pattern = /[a-zA-Z0-9_\u0392-\u03c9\u0410-\u04F9]+|[\u4E00-\u9FFF\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\uac00-\ud7af]+/g;
+// 	var m = data.match(pattern);
+// 	var count = 0;
+// 	if(m === null) return count;
+// 	for(var i = 0; i < m.length; i++) {
+// 		if(m[i].charCodeAt(0) >= 0x4E00) {
+// 			count += m[i].length;
+// 		} else {
+// 			count += 1;
+// 		}
+// 	}
+// 	return count;
+// }
 
-var toolbarBuiltInButtons = {
-	"bold": {
-		name: "bold",
-		action: toggleBold,
-		className: "fa fa-bold",
-		title: "Bold",
-		default: true
-	},
-	"italic": {
-		name: "italic",
-		action: toggleItalic,
-		className: "fa fa-italic",
-		title: "Italic",
-		default: true
-	},
-	"strikethrough": {
-		name: "strikethrough",
-		action: toggleStrikethrough,
-		className: "fa fa-strikethrough",
-		title: "Strikethrough"
-	},
-	"heading": {
-		name: "heading",
-		action: toggleHeadingSmaller,
-		className: "fa fa-header",
-		title: "Heading",
-		default: true
-	},
-	"heading-smaller": {
-		name: "heading-smaller",
-		action: toggleHeadingSmaller,
-		className: "fa fa-header fa-header-x fa-header-smaller",
-		title: "Smaller Heading"
-	},
-	"heading-bigger": {
-		name: "heading-bigger",
-		action: toggleHeadingBigger,
-		className: "fa fa-header fa-header-x fa-header-bigger",
-		title: "Bigger Heading"
-	},
-	"heading-1": {
-		name: "heading-1",
-		action: toggleHeading1,
-		className: "fa fa-header fa-header-x fa-header-1",
-		title: "Big Heading"
-	},
-	"heading-2": {
-		name: "heading-2",
-		action: toggleHeading2,
-		className: "fa fa-header fa-header-x fa-header-2",
-		title: "Medium Heading"
-	},
-	"heading-3": {
-		name: "heading-3",
-		action: toggleHeading3,
-		className: "fa fa-header fa-header-x fa-header-3",
-		title: "Small Heading"
-	},
-	"separator-1": {
-		name: "separator-1"
-	},
-	"code": {
-		name: "code",
-		action: toggleCodeBlock,
-		className: "fa fa-code",
-		title: "Code"
-	},
-	"quote": {
-		name: "quote",
-		action: toggleBlockquote,
-		className: "fa fa-quote-left",
-		title: "Quote",
-		default: true
-	},
-	"unordered-list": {
-		name: "unordered-list",
-		action: toggleUnorderedList,
-		className: "fa fa-list-ul",
-		title: "Generic List",
-		default: true
-	},
-	"ordered-list": {
-		name: "ordered-list",
-		action: toggleOrderedList,
-		className: "fa fa-list-ol",
-		title: "Numbered List",
-		default: true
-	},
-	"clean-block": {
-		name: "clean-block",
-		action: cleanBlock,
-		className: "fa fa-eraser fa-clean-block",
-		title: "Clean block"
-	},
-	"separator-2": {
-		name: "separator-2"
-	},
-	"link": {
-		name: "link",
-		action: drawLink,
-		className: "fa fa-link",
-		title: "Create Link",
-		default: true
-	},
-	"image": {
-		name: "image",
-		action: drawImage,
-		className: "fa fa-picture-o",
-		title: "Insert Image",
-		default: true
-	},
-	"table": {
-		name: "table",
-		action: drawTable,
-		className: "fa fa-table",
-		title: "Insert Table"
-	},
-	"horizontal-rule": {
-		name: "horizontal-rule",
-		action: drawHorizontalRule,
-		className: "fa fa-minus",
-		title: "Insert Horizontal Line"
-	},
-	"separator-3": {
-		name: "separator-3"
-	},
-	"preview": {
-		name: "preview",
-		action: togglePreview,
-		className: "fa fa-eye no-disable",
-		title: "Toggle Preview",
-		default: true
-	},
-	"side-by-side": {
-		name: "side-by-side",
-		action: toggleSideBySide,
-		className: "fa fa-columns no-disable no-mobile",
-		title: "Toggle Side by Side",
-		default: true
-	},
-	"fullscreen": {
-		name: "fullscreen",
-		action: toggleFullScreen,
-		className: "fa fa-arrows-alt no-disable no-mobile",
-		title: "Toggle Fullscreen",
-		default: true
-	},
-	"separator-4": {
-		name: "separator-4"
-	},
-	"guide": {
-		name: "guide",
-		action: "https://simplemde.com/markdown-guide",
-		className: "fa fa-question-circle",
-		title: "Markdown Guide",
-		default: true
-	},
-	"separator-5": {
-		name: "separator-5"
-	},
-	"undo": {
-		name: "undo",
-		action: undo,
-		className: "fa fa-undo no-disable",
-		title: "Undo"
-	},
-	"redo": {
-		name: "redo",
-		action: redo,
-		className: "fa fa-repeat no-disable",
-		title: "Redo"
-	}
-};
+// var toolbarBuiltInButtons = {
+// 	"bold": {
+// 		name: "bold",
+// 		action: toggleBold,
+// 		className: "fa fa-bold",
+// 		title: "Bold",
+// 		default: true
+// 	},
+// 	"italic": {
+// 		name: "italic",
+// 		action: toggleItalic,
+// 		className: "fa fa-italic",
+// 		title: "Italic",
+// 		default: true
+// 	},
+// 	"strikethrough": {
+// 		name: "strikethrough",
+// 		action: toggleStrikethrough,
+// 		className: "fa fa-strikethrough",
+// 		title: "Strikethrough"
+// 	},
+// 	"heading": {
+// 		name: "heading",
+// 		action: toggleHeadingSmaller,
+// 		className: "fa fa-header",
+// 		title: "Heading",
+// 		default: true
+// 	},
+// 	"heading-smaller": {
+// 		name: "heading-smaller",
+// 		action: toggleHeadingSmaller,
+// 		className: "fa fa-header fa-header-x fa-header-smaller",
+// 		title: "Smaller Heading"
+// 	},
+// 	"heading-bigger": {
+// 		name: "heading-bigger",
+// 		action: toggleHeadingBigger,
+// 		className: "fa fa-header fa-header-x fa-header-bigger",
+// 		title: "Bigger Heading"
+// 	},
+// 	"heading-1": {
+// 		name: "heading-1",
+// 		action: toggleHeading1,
+// 		className: "fa fa-header fa-header-x fa-header-1",
+// 		title: "Big Heading"
+// 	},
+// 	"heading-2": {
+// 		name: "heading-2",
+// 		action: toggleHeading2,
+// 		className: "fa fa-header fa-header-x fa-header-2",
+// 		title: "Medium Heading"
+// 	},
+// 	"heading-3": {
+// 		name: "heading-3",
+// 		action: toggleHeading3,
+// 		className: "fa fa-header fa-header-x fa-header-3",
+// 		title: "Small Heading"
+// 	},
+// 	"separator-1": {
+// 		name: "separator-1"
+// 	},
+// 	"code": {
+// 		name: "code",
+// 		action: toggleCodeBlock,
+// 		className: "fa fa-code",
+// 		title: "Code"
+// 	},
+// 	"quote": {
+// 		name: "quote",
+// 		action: toggleBlockquote,
+// 		className: "fa fa-quote-left",
+// 		title: "Quote",
+// 		default: true
+// 	},
+// 	"unordered-list": {
+// 		name: "unordered-list",
+// 		action: toggleUnorderedList,
+// 		className: "fa fa-list-ul",
+// 		title: "Generic List",
+// 		default: true
+// 	},
+// 	"ordered-list": {
+// 		name: "ordered-list",
+// 		action: toggleOrderedList,
+// 		className: "fa fa-list-ol",
+// 		title: "Numbered List",
+// 		default: true
+// 	},
+// 	"clean-block": {
+// 		name: "clean-block",
+// 		action: cleanBlock,
+// 		className: "fa fa-eraser fa-clean-block",
+// 		title: "Clean block"
+// 	},
+// 	"separator-2": {
+// 		name: "separator-2"
+// 	},
+// 	"link": {
+// 		name: "link",
+// 		action: drawLink,
+// 		className: "fa fa-link",
+// 		title: "Create Link",
+// 		default: true
+// 	},
+// 	"image": {
+// 		name: "image",
+// 		action: drawImage,
+// 		className: "fa fa-picture-o",
+// 		title: "Insert Image",
+// 		default: true
+// 	},
+// 	"table": {
+// 		name: "table",
+// 		action: drawTable,
+// 		className: "fa fa-table",
+// 		title: "Insert Table"
+// 	},
+// 	"horizontal-rule": {
+// 		name: "horizontal-rule",
+// 		action: drawHorizontalRule,
+// 		className: "fa fa-minus",
+// 		title: "Insert Horizontal Line"
+// 	},
+// 	"separator-3": {
+// 		name: "separator-3"
+// 	},
+// 	"preview": {
+// 		name: "preview",
+// 		action: togglePreview,
+// 		className: "fa fa-eye no-disable",
+// 		title: "Toggle Preview",
+// 		default: true
+// 	},
+// 	"side-by-side": {
+// 		name: "side-by-side",
+// 		action: toggleSideBySide,
+// 		className: "fa fa-columns no-disable no-mobile",
+// 		title: "Toggle Side by Side",
+// 		default: true
+// 	},
+// 	"fullscreen": {
+// 		name: "fullscreen",
+// 		action: toggleFullScreen,
+// 		className: "fa fa-arrows-alt no-disable no-mobile",
+// 		title: "Toggle Fullscreen",
+// 		default: true
+// 	},
+// 	"separator-4": {
+// 		name: "separator-4"
+// 	},
+// 	"guide": {
+// 		name: "guide",
+// 		action: "https://simplemde.com/markdown-guide",
+// 		className: "fa fa-question-circle",
+// 		title: "Markdown Guide",
+// 		default: true
+// 	},
+// 	"separator-5": {
+// 		name: "separator-5"
+// 	},
+// 	"undo": {
+// 		name: "undo",
+// 		action: undo,
+// 		className: "fa fa-undo no-disable",
+// 		title: "Undo"
+// 	},
+// 	"redo": {
+// 		name: "redo",
+// 		action: redo,
+// 		className: "fa fa-repeat no-disable",
+// 		title: "Redo"
+// 	}
+// };
 
 var insertTexts = {
 	link: ["[", "](#url#)"],
@@ -1527,86 +1527,86 @@ SimpleMDE.prototype.render = function(el) {
 };
 
 // Safari, in Private Browsing Mode, looks like it supports localStorage but all calls to setItem throw QuotaExceededError. We're going to detect this and set a variable accordingly.
-function isLocalStorageAvailable() {
-	if(typeof localStorage === "object") {
-		try {
-			localStorage.setItem("smde_localStorage", 1);
-			localStorage.removeItem("smde_localStorage");
-		} catch(e) {
-			return false;
-		}
-	} else {
-		return false;
-	}
+// function isLocalStorageAvailable() {
+// 	if(typeof localStorage === "object") {
+// 		try {
+// 			localStorage.setItem("smde_localStorage", 1);
+// 			localStorage.removeItem("smde_localStorage");
+// 		} catch(e) {
+// 			return false;
+// 		}
+// 	} else {
+// 		return false;
+// 	}
 
-	return true;
-}
+// 	return true;
+// }
 
-SimpleMDE.prototype.autosave = function() {
-	if(isLocalStorageAvailable()) {
-		var simplemde = this;
+// SimpleMDE.prototype.autosave = function() {
+// 	if(isLocalStorageAvailable()) {
+// 		var simplemde = this;
 
-		if(this.options.autosave.uniqueId == undefined || this.options.autosave.uniqueId == "") {
-			console.log("SimpleMDE: You must set a uniqueId to use the autosave feature");
-			return;
-		}
+// 		if(this.options.autosave.uniqueId == undefined || this.options.autosave.uniqueId == "") {
+// 			console.log("SimpleMDE: You must set a uniqueId to use the autosave feature");
+// 			return;
+// 		}
 
-		if(simplemde.element.form != null && simplemde.element.form != undefined) {
-			simplemde.element.form.addEventListener("submit", function() {
-				localStorage.removeItem("smde_" + simplemde.options.autosave.uniqueId);
-			});
-		}
+// 		if(simplemde.element.form != null && simplemde.element.form != undefined) {
+// 			simplemde.element.form.addEventListener("submit", function() {
+// 				localStorage.removeItem("smde_" + simplemde.options.autosave.uniqueId);
+// 			});
+// 		}
 
-		if(this.options.autosave.loaded !== true) {
-			if(typeof localStorage.getItem("smde_" + this.options.autosave.uniqueId) == "string" && localStorage.getItem("smde_" + this.options.autosave.uniqueId) != "") {
-				this.codemirror.setValue(localStorage.getItem("smde_" + this.options.autosave.uniqueId));
-				this.options.autosave.foundSavedValue = true;
-			}
+// 		if(this.options.autosave.loaded !== true) {
+// 			if(typeof localStorage.getItem("smde_" + this.options.autosave.uniqueId) == "string" && localStorage.getItem("smde_" + this.options.autosave.uniqueId) != "") {
+// 				this.codemirror.setValue(localStorage.getItem("smde_" + this.options.autosave.uniqueId));
+// 				this.options.autosave.foundSavedValue = true;
+// 			}
 
-			this.options.autosave.loaded = true;
-		}
+// 			this.options.autosave.loaded = true;
+// 		}
 
-		localStorage.setItem("smde_" + this.options.autosave.uniqueId, simplemde.value());
+// 		localStorage.setItem("smde_" + this.options.autosave.uniqueId, simplemde.value());
 
-		var el = document.getElementById("autosaved");
-		if(el != null && el != undefined && el != "") {
-			var d = new Date();
-			var hh = d.getHours();
-			var m = d.getMinutes();
-			var dd = "am";
-			var h = hh;
-			if(h >= 12) {
-				h = hh - 12;
-				dd = "pm";
-			}
-			if(h == 0) {
-				h = 12;
-			}
-			m = m < 10 ? "0" + m : m;
+// 		var el = document.getElementById("autosaved");
+// 		if(el != null && el != undefined && el != "") {
+// 			var d = new Date();
+// 			var hh = d.getHours();
+// 			var m = d.getMinutes();
+// 			var dd = "am";
+// 			var h = hh;
+// 			if(h >= 12) {
+// 				h = hh - 12;
+// 				dd = "pm";
+// 			}
+// 			if(h == 0) {
+// 				h = 12;
+// 			}
+// 			m = m < 10 ? "0" + m : m;
 
-			el.innerHTML = "Autosaved: " + h + ":" + m + " " + dd;
-		}
+// 			el.innerHTML = "Autosaved: " + h + ":" + m + " " + dd;
+// 		}
 
-		this.autosaveTimeoutId = setTimeout(function() {
-			simplemde.autosave();
-		}, this.options.autosave.delay || 10000);
-	} else {
-		console.log("SimpleMDE: localStorage not available, cannot autosave");
-	}
-};
+// 		this.autosaveTimeoutId = setTimeout(function() {
+// 			simplemde.autosave();
+// 		}, this.options.autosave.delay || 10000);
+// 	} else {
+// 		console.log("SimpleMDE: localStorage not available, cannot autosave");
+// 	}
+// };
 
-SimpleMDE.prototype.clearAutosavedValue = function() {
-	if(isLocalStorageAvailable()) {
-		if(this.options.autosave == undefined || this.options.autosave.uniqueId == undefined || this.options.autosave.uniqueId == "") {
-			console.log("SimpleMDE: You must set a uniqueId to clear the autosave value");
-			return;
-		}
+// SimpleMDE.prototype.clearAutosavedValue = function() {
+// 	if(isLocalStorageAvailable()) {
+// 		if(this.options.autosave == undefined || this.options.autosave.uniqueId == undefined || this.options.autosave.uniqueId == "") {
+// 			console.log("SimpleMDE: You must set a uniqueId to clear the autosave value");
+// 			return;
+// 		}
 
-		localStorage.removeItem("smde_" + this.options.autosave.uniqueId);
-	} else {
-		console.log("SimpleMDE: localStorage not available, cannot autosave");
-	}
-};
+// 		localStorage.removeItem("smde_" + this.options.autosave.uniqueId);
+// 	} else {
+// 		console.log("SimpleMDE: localStorage not available, cannot autosave");
+// 	}
+// };
 
 SimpleMDE.prototype.createSideBySide = function() {
 	var cm = this.codemirror;
@@ -1748,132 +1748,132 @@ SimpleMDE.prototype.createToolbar = function(items) {
 	return bar;
 };
 
-SimpleMDE.prototype.createStatusbar = function(status) {
-	// Initialize
-	status = status || this.options.status;
-	var options = this.options;
-	var cm = this.codemirror;
+// SimpleMDE.prototype.createStatusbar = function(status) {
+// 	// Initialize
+// 	status = status || this.options.status;
+// 	var options = this.options;
+// 	var cm = this.codemirror;
 
 
-	// Make sure the status variable is valid
-	if(!status || status.length === 0)
-		return;
+// 	// Make sure the status variable is valid
+// 	if(!status || status.length === 0)
+// 		return;
 
 
-	// Set up the built-in items
-	var items = [];
-	var i, onUpdate, defaultValue;
+// 	// Set up the built-in items
+// 	var items = [];
+// 	var i, onUpdate, defaultValue;
 
-	for(i = 0; i < status.length; i++) {
-		// Reset some values
-		onUpdate = undefined;
-		defaultValue = undefined;
-
-
-		// Handle if custom or not
-		if(typeof status[i] === "object") {
-			items.push({
-				className: status[i].className,
-				defaultValue: status[i].defaultValue,
-				onUpdate: status[i].onUpdate
-			});
-		} else {
-			var name = status[i];
-
-			if(name === "words") {
-				defaultValue = function(el) {
-					el.innerHTML = wordCount(cm.getValue());
-				};
-				onUpdate = function(el) {
-					el.innerHTML = wordCount(cm.getValue());
-				};
-			} else if(name === "lines") {
-				defaultValue = function(el) {
-					el.innerHTML = cm.lineCount();
-				};
-				onUpdate = function(el) {
-					el.innerHTML = cm.lineCount();
-				};
-			} else if(name === "cursor") {
-				defaultValue = function(el) {
-					el.innerHTML = "0:0";
-				};
-				onUpdate = function(el) {
-					var pos = cm.getCursor();
-					el.innerHTML = pos.line + ":" + pos.ch;
-				};
-			} else if(name === "autosave") {
-				defaultValue = function(el) {
-					if(options.autosave != undefined && options.autosave.enabled === true) {
-						el.setAttribute("id", "autosaved");
-					}
-				};
-			}
-
-			items.push({
-				className: name,
-				defaultValue: defaultValue,
-				onUpdate: onUpdate
-			});
-		}
-	}
+// 	for(i = 0; i < status.length; i++) {
+// 		// Reset some values
+// 		onUpdate = undefined;
+// 		defaultValue = undefined;
 
 
-	// Create element for the status bar
-	var bar = document.createElement("div");
-	bar.className = "editor-statusbar";
+// 		// Handle if custom or not
+// 		if(typeof status[i] === "object") {
+// 			items.push({
+// 				className: status[i].className,
+// 				defaultValue: status[i].defaultValue,
+// 				onUpdate: status[i].onUpdate
+// 			});
+// 		} else {
+// 			var name = status[i];
+
+// 			if(name === "words") {
+// 				defaultValue = function(el) {
+// 					el.innerHTML = wordCount(cm.getValue());
+// 				};
+// 				onUpdate = function(el) {
+// 					el.innerHTML = wordCount(cm.getValue());
+// 				};
+// 			} else if(name === "lines") {
+// 				defaultValue = function(el) {
+// 					el.innerHTML = cm.lineCount();
+// 				};
+// 				onUpdate = function(el) {
+// 					el.innerHTML = cm.lineCount();
+// 				};
+// 			} else if(name === "cursor") {
+// 				defaultValue = function(el) {
+// 					el.innerHTML = "0:0";
+// 				};
+// 				onUpdate = function(el) {
+// 					var pos = cm.getCursor();
+// 					el.innerHTML = pos.line + ":" + pos.ch;
+// 				};
+// 			} else if(name === "autosave") {
+// 				defaultValue = function(el) {
+// 					if(options.autosave != undefined && options.autosave.enabled === true) {
+// 						el.setAttribute("id", "autosaved");
+// 					}
+// 				};
+// 			}
+
+// 			items.push({
+// 				className: name,
+// 				defaultValue: defaultValue,
+// 				onUpdate: onUpdate
+// 			});
+// 		}
+// 	}
 
 
-	// Create a new span for each item
-	for(i = 0; i < items.length; i++) {
-		// Store in temporary variable
-		var item = items[i];
+// 	// Create element for the status bar
+// 	var bar = document.createElement("div");
+// 	bar.className = "editor-statusbar";
 
 
-		// Create span element
-		var el = document.createElement("span");
-		el.className = item.className;
+// 	// Create a new span for each item
+// 	for(i = 0; i < items.length; i++) {
+// 		// Store in temporary variable
+// 		var item = items[i];
 
 
-		// Ensure the defaultValue is a function
-		if(typeof item.defaultValue === "function") {
-			item.defaultValue(el);
-		}
+// 		// Create span element
+// 		var el = document.createElement("span");
+// 		el.className = item.className;
 
 
-		// Ensure the onUpdate is a function
-		if(typeof item.onUpdate === "function") {
-			// Create a closure around the span of the current action, then execute the onUpdate handler
-			this.codemirror.on("update", (function(el, item) {
-				return function() {
-					item.onUpdate(el);
-				};
-			}(el, item)));
-		}
+// 		// Ensure the defaultValue is a function
+// 		if(typeof item.defaultValue === "function") {
+// 			item.defaultValue(el);
+// 		}
 
 
-		// Append the item to the status bar
-		bar.appendChild(el);
-	}
+// 		// Ensure the onUpdate is a function
+// 		if(typeof item.onUpdate === "function") {
+// 			// Create a closure around the span of the current action, then execute the onUpdate handler
+// 			this.codemirror.on("update", (function(el, item) {
+// 				return function() {
+// 					item.onUpdate(el);
+// 				};
+// 			}(el, item)));
+// 		}
 
 
-	// Insert the status bar into the DOM
-	var cmWrapper = this.codemirror.getWrapperElement();
-	cmWrapper.parentNode.insertBefore(bar, cmWrapper.nextSibling);
-	return bar;
-};
+// 		// Append the item to the status bar
+// 		bar.appendChild(el);
+// 	}
+
+
+// 	// Insert the status bar into the DOM
+// 	var cmWrapper = this.codemirror.getWrapperElement();
+// 	cmWrapper.parentNode.insertBefore(bar, cmWrapper.nextSibling);
+// 	return bar;
+// };
 
 /**
  * Get or set the text content.
  */
-SimpleMDE.prototype.value = function(val) {
-	if(val === undefined) {
-		return this.codemirror.getValue();
-	} else {
-		this.codemirror.getDoc().setValue(val);
-		return this;
-	}
-};
+// SimpleMDE.prototype.value = function(val) {
+// 	if(val === undefined) {
+// 		return this.codemirror.getValue();
+// 	} else {
+// 		this.codemirror.getDoc().setValue(val);
+// 		return this;
+// 	}
+// };
 
 
 /**
@@ -1972,13 +1972,13 @@ SimpleMDE.prototype.toggleFullScreen = function() {
 	toggleFullScreen(this);
 };
 
-SimpleMDE.prototype.isPreviewActive = function() {
-	var cm = this.codemirror;
-	var wrapper = cm.getWrapperElement();
-	var preview = wrapper.lastChild;
+// SimpleMDE.prototype.isPreviewActive = function() {
+// 	var cm = this.codemirror;
+// 	var wrapper = cm.getWrapperElement();
+// 	var preview = wrapper.lastChild;
 
-	return /editor-preview-active/.test(preview.className);
-};
+// 	return /editor-preview-active/.test(preview.className);
+// };
 
 SimpleMDE.prototype.isSideBySideActive = function() {
 	var cm = this.codemirror;
@@ -1994,11 +1994,11 @@ SimpleMDE.prototype.isFullscreenActive = function() {
 	return cm.getOption("fullScreen");
 };
 
-SimpleMDE.prototype.getState = function() {
-	var cm = this.codemirror;
+// SimpleMDE.prototype.getState = function() {
+// 	var cm = this.codemirror;
 
-	return getState(cm);
-};
+// 	return getState(cm);
+// };
 
 SimpleMDE.prototype.toTextArea = function() {
 	var cm = this.codemirror;

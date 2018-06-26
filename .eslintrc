@@ -1,23 +1,25 @@
 {
-  "rules": {
-    "indent": [
-      2,
-      "tab"
-    ],
-    "strict": 0,
-    "no-console": 0,
-    "quotes": [
-      2,
-      "double"
-    ],
-    "semi": [
-      2,
-      "always"
-    ]
+  "extends": "airbnb-base",
+  "parserOptions": {
+    "ecmaVersion": 2017,
+    "sourceType": "module"
   },
   "env": {
-    "browser": true,
-    "node":true
+    "browser": true
   },
-  "extends": "eslint:recommended"
+  "rules": {
+    "indent": ["error", 4, {
+      "SwitchCase": 1
+    }],
+    "max-len": ["warn", 120],
+    "no-shadow": "off",
+    "no-param-reassign": "off",
+    "prefer-destructuring": "off",
+    "no-use-before-define": ["error", {
+      "functions": false
+    }],
+    "no-underscore-dangle": "off",
+    "comma-dangle": ["error", "never"],
+    "import/prefer-default-export": "off"
+  }
 }
