@@ -1,7 +1,11 @@
 import {
-    toggleBold,
-    toggleItalic,
-    toggleStrikethrough,
+    formatBold,
+    formatItalic,
+    formatStrikethrough,
+    formatCode,
+    formatBlockquote,
+    formatMath,
+    insertTable,
     undo,
     redo
 } from './features';
@@ -17,21 +21,21 @@ import { functionKeys } from '../utils/browser';
 export const defaultToolbar = [
     {
         name: 'bold',
-        action: toggleBold,
+        action: formatBold,
         icon: 'fa fa-bold',
         title: 'Bold',
         shortcut: 'Ctrl-B'
     },
     {
         name: 'italic',
-        action: toggleItalic,
+        action: formatItalic,
         icon: 'fa fa-italic',
         title: 'Italic',
         shortcut: 'Ctrl-I'
     },
     {
         name: 'strikethrough',
-        action: toggleStrikethrough,
+        action: formatStrikethrough,
         icon: 'fa fa-strikethrough',
         title: 'Strikethrough'
     },
@@ -74,18 +78,25 @@ export const defaultToolbar = [
     // {
     //     name: 'separator'
     // },
-    // {
-    //     name: 'code',
-    //     action: toggleCodeBlock,
-    //     icon: 'fa fa-code',
-    //     title: 'Code'
-    // },
-    // {
-    //     name: 'quote',
-    //     action: toggleBlockquote,
-    //     icon: 'fa fa-quote-left',
-    //     title: 'Quote'
-    // },
+    'separator',
+    {
+        name: 'code',
+        action: formatCode,
+        icon: 'fa fa-code',
+        title: 'Code'
+    },
+    {
+        name: 'quote',
+        action: formatBlockquote,
+        icon: 'fa fa-quote-left',
+        title: 'Quote'
+    },
+    {
+        name: 'math',
+        action: formatMath,
+        icon: 'fa fa-calculator',
+        title: 'Math formula'
+    },
     // {
     //     name: 'unordered-list',
     //     action: toggleUnorderedList,
@@ -113,12 +124,12 @@ export const defaultToolbar = [
     //     icon: 'fa fa-picture-o',
     //     title: 'Insert Image'
     // },
-    // {
-    //     name: 'table',
-    //     action: drawTable,
-    //     icon: 'fa fa-table',
-    //     title: 'Insert Table'
-    // },
+    {
+        name: 'table',
+        action: insertTable,
+        icon: 'fa fa-table',
+        title: 'Insert Table'
+    },
     // {
     //     name: 'horizontal-rule',
     //     action: drawHorizontalRule,

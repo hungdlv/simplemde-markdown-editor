@@ -5,7 +5,7 @@ import _escapeRegExp from 'lodash/escapeRegExp';
 
 import { getState, isReadonly } from '../utils/editor';
 
-function toggleStyle(editor, style, alter) {
+function formatInline(editor, style, alter) {
     if (isReadonly(editor)) {
         return;
     }
@@ -74,8 +74,8 @@ const removeDelimiter = _curry((delimiters, str) => {
     return str.replace(regexp, '');
 });
 
-export function toggleBold(editor) {
-    toggleStyle(editor, 'bold', (text, isBold, start, end) => {
+export function formatBold(editor) {
+    formatInline(editor, 'bold', (text, isBold, start, end) => {
         if (!isBold) {
             const alteredText = _flow(
                 removeDelimiter(['**', '__']),
@@ -97,8 +97,8 @@ export function toggleBold(editor) {
     });
 }
 
-export function toggleItalic(editor) {
-    toggleStyle(editor, 'italic', (text, isItalic, start, end) => {
+export function formatItalic(editor) {
+    formatInline(editor, 'italic', (text, isItalic, start, end) => {
         if (!isItalic) {
             return {
                 text: _flow(
@@ -118,8 +118,8 @@ export function toggleItalic(editor) {
     });
 }
 
-export function toggleStrikethrough(editor) {
-    toggleStyle(editor, 'bold', (text, isStrikethrough, start, end) => {
+export function formatStrikethrough(editor) {
+    formatInline(editor, 'bold', (text, isStrikethrough, start, end) => {
         if (!isStrikethrough) {
             const alteredText = _flow(
                 removeDelimiter(['~~']),
@@ -149,9 +149,120 @@ export function toggleStrikethrough(editor) {
 
 // }
 
-// export function insertTable(editor) {
+const table = '|  |  |\n'
+            + '|--|--|\n'
+            + '|  |  |';
 
-// }
+const code = '```language\n\n```';
+
+const math = '$$\n\n$$';
+
+function insertBlock(block, cursor, cm) {
+    const { ch, line } = cursor;
+
+    const currentLine = cm.getLine(line);
+
+    const isFirstLine = line === 0;
+    const isLastLine = line === cm.lineCount() - 1;
+    const isEndOfLine = ch === currentLine.length;
+    const currentLineIsBlank = currentLine === '';
+    const previousLineIsBlank = isFirstLine || cm.getLine(line - 1) === '';
+    const nextLineIsBlank = isLastLine || cm.getLine(line + 1) === '';
+
+    let headStart;
+    if (!currentLineIsBlank) {
+        headStart = 2;
+    } else if (!previousLineIsBlank) {
+        headStart = 1;
+    } else {
+        headStart = 0;
+    }
+
+    const head = '\n'.repeat(headStart);
+    const tail = nextLineIsBlank ? '' : '\n';
+
+    const insertAt = {
+        line,
+        ch: isEndOfLine ? ch : currentLine.length
+    };
+
+    cm.replaceRange(`${head}${block}${tail}`, insertAt);
+
+    return { ch: 0, line: line + headStart };
+}
+
+function toggleBlock(opening, closing, selectionStart, selectionEnd, cm) {
+    const blockStart = { ch: 0, line: selectionStart.line };
+    const blockEnd = { ch: cm.getLine(selectionEnd.line).length, line: selectionEnd.line };
+
+    const text = cm.getRange(blockStart, blockEnd);
+    const textIndented = text.split('\n').map(t => `    ${t}`).join('\n');
+    const altered = `${opening}\n${textIndented}\n${closing}`;
+
+    cm.replaceRange(altered, blockStart, blockEnd);
+}
+
+function toggleLine(text, cm) {
+    const cursor = cm.getCursor('end');
+    const line = cm.getLine(cursor.line);
+
+    const regexpString = `^${_escapeRegExp(text)}\\s`;
+    const regexp = new RegExp(regexpString);
+
+    if (regexp.test(line)) {
+        cm.replaceRange('', { ch: 0, line: cursor.line }, { ch: text.length + 1, line: cursor.line });
+    } else {
+        cm.replaceRange(`${text} `, { ch: 0, line: cursor.line });
+    }
+}
+
+export function insertTable(editor) {
+    const cm = editor.codemirror;
+    const cursor = cm.getCursor('end');
+    const insertedAt = insertBlock(table, cursor, editor.codemirror);
+
+    cm.setSelection({ ch: 1, line: insertedAt.line }, { ch: 3, line: insertedAt.line });
+    cm.focus();
+}
+
+export function formatCode(editor) {
+    const cm = editor.codemirror;
+    const selectionStart = cm.getCursor('start');
+    const selectionEnd = cm.getCursor('end');
+
+    const selectingMultipleLines = selectionStart.line !== selectionEnd.line;
+    const selectingWholeLine = selectionStart.line === selectionEnd.line
+                            && selectionStart.ch === 0
+                            && selectionEnd.ch === cm.getLine(selectionStart.line).length;
+
+    const currentLineIsBlank = cm.getLine(selectionStart.line) === '';
+
+    if (selectingMultipleLines || selectingWholeLine) {
+        toggleBlock('```language', '```', selectionStart, selectionEnd, cm);
+        editor.codemirror.setSelection({ ch: 3, line: selectionStart.line }, { ch: 11, line: selectionStart.line });
+    } else if (currentLineIsBlank) {
+        const insertedAt = insertBlock(code, selectionStart, cm);
+        editor.codemirror.setSelection({ ch: 3, line: insertedAt.line }, { ch: 11, line: insertedAt.line });
+    }
+
+    editor.codemirror.focus();
+}
+
+export function formatBlockquote(editor) {
+    toggleLine('>', editor.codemirror);
+    editor.codemirror.focus();
+}
+
+export function formatMath(editor) {
+    const cm = editor.codemirror;
+    const cursor = cm.getCursor('end');
+
+    if (cm.getLine(cursor.line) === '') {
+        const insertedAt = insertBlock(math, cursor, cm);
+        editor.codemirror.setSelection({ ch: 0, line: insertedAt.line + 1 });
+        editor.codemirror.focus();
+    }
+}
 
 export function insertLink(link, editor) {
     const codemirror = editor.codemirror;
@@ -196,7 +307,6 @@ export function undo(editor) {
     cm.undo();
     cm.focus();
 }
-
 
 /**
  * Redo action.

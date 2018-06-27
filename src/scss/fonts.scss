@@ -1,0 +1,75 @@
+@font-face {
+    font-family: 'smde-icon';
+    src: url('fonts/smde-icon.eot?j08w5v');
+    src: url('fonts/smde-icon.eot?j08w5v#iefix') format('embedded-opentype'),
+        url('fonts/smde-icon.ttf?j08w5v') format('truetype'), url('fonts/smde-icon.woff?j08w5v') format('woff'),
+        url('fonts/smde-icon.svg?j08w5v#smde-icon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.smde__toolbar {
+    i {
+        /* use !important to prevent issues with browser extensions that change fonts */
+        font-family: 'smde-icon' !important;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+
+        /* Better Font Rendering =========== */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    .smde-icon-live-edit:before {
+        content: '\e904';
+    }
+    .smde-icon-help:before {
+        content: '\e90e';
+    }
+    .smde-icon-redo:before {
+        content: '\e908';
+    }
+    .smde-icon-undo:before {
+        content: '\e90a';
+    }
+    .smde-icon-photo:before {
+        content: '\e90b';
+    }
+    .smde-icon-link:before {
+        content: '\e90c';
+    }
+    .smde-icon-code:before {
+        content: '\e90d';
+    }
+    .smde-icon-list-bullet:before {
+        content: '\e909';
+    }
+    .smde-icon-list-numbered:before {
+        content: '\e907';
+    }
+    .smde-icon-quote:before {
+        content: '\e906';
+    }
+    .smde-icon-functions:before {
+        content: '\e905';
+    }
+    .smde-icon-preview:before {
+        content: '\e903';
+    }
+    .smde-icon-italic:before {
+        content: '\e900';
+    }
+    .smde-icon-strikethrough:before {
+        content: '\e902';
+    }
+    .smde-icon-bold:before {
+        content: '\e901';
+    }
+    .smde-icon-font-size:before {
+        content: '\ea61';
+    }
+}
+

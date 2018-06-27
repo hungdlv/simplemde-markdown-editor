@@ -1,80 +1,89 @@
-let savedOverflow = '';
+let originalBodyOverflow = '';
 
-export function toggleFullScreen(editor) {
-    // Set fullscreen
+function liveEditActive(editor) {
+    return editor.el.classList.contains('smde--live-edit');
+}
+
+function fullscreenActive(editor) {
+    return editor.codemirror.getOption('fullScreen');
+}
+
+function fullScreenOff(editor) {
     const cm = editor.codemirror;
-    const isActive = cm.getOption('fullScreen');
-    cm.setOption('fullScreen', !isActive);
 
-    // Prevent scrolling on body during fullscreen active
-    if (isActive) {
-        savedOverflow = document.body.style.overflow;
-        document.body.style.overflow = 'hidden';
-    } else {
-        document.body.style.overflow = savedOverflow;
+    if (liveEditActive(editor)) {
+        liveEditOff(editor);
     }
 
-    editor.el.classList.toggle('smde--fullscreen');
+    cm.setOption('fullScreen', false);
 
+    editor.el.classList.remove('smde--fullscreen');
     if (editor.toolbar) {
-        editor.toolbar.classList.toggle('fullscreen');
+        editor.toolbar.classList.remove('fullscreen');
+    }
+
+    document.body.style.overflow = originalBodyOverflow;
+}
+
+function fullScreenOn(editor) {
+    const cm = editor.codemirror;
+
+    cm.setOption('fullScreen', true);
+
+    editor.el.classList.add('smde--fullscreen');
+    if (editor.toolbar) {
+        editor.toolbar.classList.add('fullscreen');
+    }
+
+    originalBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+}
+
+function liveEditOn(editor) {
+    const cm = editor.codemirror;
+    const previewer = editor.sidePreviewer;
+
+    if (!fullscreenActive(editor)) {
+        fullScreenOn(editor);
+    }
+
+    editor.el.classList.add('smde--live-edit');
+    previewer.classList.add('editor-preview-active-side');
+    cm.getWrapperElement().classList.add('CodeMirror-sided');
+
+    editor.__syncPreview();
+    cm.on('update', editor.__syncPreview);
+}
+
+function liveEditOff(editor) {
+    const cm = editor.codemirror;
+    const previewer = editor.sidePreviewer;
+
+    editor.el.classList.remove('smde--live-edit');
+    previewer.classList.remove('editor-preview-active-side');
+    cm.getWrapperElement().classList.remove('CodeMirror-sided');
+
+    cm.off('update', editor.__syncPreview);
+}
+
+export function toggleFullScreen(editor) {
+    if (fullscreenActive(editor)) {
+        fullScreenOff(editor);
+    } else {
+        fullScreenOn(editor);
     }
 }
 
 export function toggleSideBySide(editor) {
-    const cm = editor.codemirror;
-    const wrapper = cm.getWrapperElement();
-    const preview = wrapper.nextSibling;
-    const toolbarButton = editor.toolbarElements['side-by-side'];
-    let useSideBySideListener = false;
-    if (/editor-preview-active-side/.test(preview.className)) {
-        preview.className = preview.className.replace(
-            /\s*editor-preview-active-side\s*/g, ''
-        );
-        toolbarButton.className = toolbarButton.className.replace(/\s*active\s*/g, '');
-        wrapper.className = wrapper.className.replace(/\s*CodeMirror-sided\s*/g, ' ');
+    if (!editor.sidePreviewer) {
+        return;
+    }
+
+    if (editor.el.classList.contains('smde--live-edit')) {
+        liveEditOff(editor);
     } else {
-        // When the preview button is clicked for the first time,
-        // give some time for the transition from editor.css to fire and the view to slide from right to left,
-        // instead of just appearing.
-        setTimeout(() => {
-            if (!cm.getOption('fullScreen')) { toggleFullScreen(editor); }
-            preview.className += ' editor-preview-active-side';
-        }, 1);
-        toolbarButton.className += ' active';
-        wrapper.className += ' CodeMirror-sided';
-        useSideBySideListener = true;
+        liveEditOn(editor);
     }
-
-    // Hide normal preview if active
-    const previewNormal = wrapper.lastChild;
-    if (/editor-preview-active/.test(previewNormal.className)) {
-        previewNormal.className = previewNormal.className.replace(
-            /\s*editor-preview-active\s*/g, ''
-        );
-        const toolbar = editor.toolbarElements.preview;
-        const toolbarEl = wrapper.previousSibling;
-        toolbar.className = toolbar.className.replace(/\s*active\s*/g, '');
-        toolbarEl.className = toolbarEl.className.replace(/\s*disabled-for-preview*/g, '');
-    }
-
-    const sideBySideRenderingFunction = () => {
-        preview.innerHTML = editor.options.renderPreview(editor.value());
-    };
-
-    if (!cm.sideBySideRenderingFunction) {
-        cm.sideBySideRenderingFunction = sideBySideRenderingFunction;
-    }
-
-    if (useSideBySideListener) {
-        preview.innerHTML = editor.options.renderPreview(editor.value());
-        cm.on('update', cm.sideBySideRenderingFunction);
-    } else {
-        cm.off('update', cm.sideBySideRenderingFunction);
-    }
-
-    // Refresh to fix selection being off (#309)
-    cm.refresh();
 }
 
 export function togglePreview(editor) {
@@ -134,4 +143,7 @@ export function addSidePreviewer(editor) {
     });
 
     editor.sidePreviewer = preview;
+    editor.__syncPreview = () => {
+        preview.innerHTML = editor.options.renderPreview(editor.value());
+    };
 }

@@ -1,4 +1,4 @@
-import { createEditor } from '../dist/simplemde.es';
+import { createEditor } from '../src/js/index';
 
 document.addEventListener('DOMContentLoaded', () => {
     const textarea = document.getElementById('textarea');
