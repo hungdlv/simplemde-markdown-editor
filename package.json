@@ -19,7 +19,8 @@
   "dependencies": {
     "codemirror": "^5.39.0",
     "lodash": "^4.17.10",
-    "markdown-it": "^8.4.1"
+    "markdown-it": "^8.4.1",
+    "prismjs": "^1.15.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

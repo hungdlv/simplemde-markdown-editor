@@ -36,10 +36,7 @@ export function createEditor(el, options = {}) {
 
     const codemirror = CodeMirror.fromTextArea(el, {
         mode: {
-            name: 'gfm',
-            tokenTypeOverrides: {
-                emoji: 'emoji'
-            }
+            name: 'markdown'
         },
         theme: 'default',
         tabSize: mergedOptions.tabSize,
@@ -52,6 +49,8 @@ export function createEditor(el, options = {}) {
         placeholder: mergedOptions.placeholder || el.getAttribute('placeholder') || '',
         allowDropFileTypes: ['text/plain']
     });
+
+    window.cm = codemirror;
 
     if (mergedOptions.forceSync === true) {
         codemirror.on('change', codemirror.save);
